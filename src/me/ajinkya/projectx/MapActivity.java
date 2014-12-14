@@ -2,7 +2,6 @@ package me.ajinkya.projectx;
 
 import android.app.Dialog;
 import android.content.Intent;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -25,8 +24,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-public class MapActivity extends ActionBarActivity implements LocationListener, OnInfoWindowClickListener, 
-    OnMarkerClickListener {
+public class MapActivity extends ActionBarActivity implements LocationListener,
+    OnInfoWindowClickListener, OnMarkerClickListener {
 
   // Google Map
   private GoogleMap googleMap;
@@ -42,21 +41,19 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
     // Showing status
     if (status != ConnectionResult.SUCCESS) { // Google Play Services are
-      // not available
-
+      // not available, show error, what else I can do????
       int requestCode = 10;
       Dialog dialog = GooglePlayServicesUtil.getErrorDialog(status, this, requestCode);
       dialog.show();
 
-    } else { // Google Play Services are available
-
+    } else { 
+      // Google Play Services are available Hurrray!!!!
       initilizeMap();
       Location location = getUserLocation();
-      if (location != null) {
-        addUserToMap(location);
-        addAutosOnMap();
-        Toast.makeText(getApplicationContext(), "Click on auto to get driver details.", Toast.LENGTH_LONG).show();
-      } 
+      addUserToMap(location);
+      addAutosOnMap();
+      Toast.makeText(getApplicationContext(), "Click on auto to get driver details.",
+          Toast.LENGTH_LONG).show();
     }
   }
 
@@ -70,28 +67,32 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
     // Getting GoogleMap object from the fragment
     googleMap = fm.getMap();
-
     googleMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-    googleMap.setOnMarkerClickListener(this);
-    googleMap.setOnInfoWindowClickListener(this);
 
-    // Enabling MyLocation Layer of Google Map
+    // Remove some unwanted things from UI
     googleMap.setMyLocationEnabled(false);
     googleMap.getUiSettings().setMyLocationButtonEnabled(false);
     googleMap.getUiSettings().setZoomControlsEnabled(true);
-
+    
+    // marker and InfoWindow click listeners
+    googleMap.setOnMarkerClickListener(this);
+    googleMap.setOnInfoWindowClickListener(this);
   }
 
+  /**
+   * Method to get users current location
+   */
   private Location getUserLocation() {
     // Getting LocationManager object from System Service
     // LOCATION_SERVICE
     LocationManager locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
+    // using network for now, will add GPS later
     // Creating a criteria object to retrieve provider
-    Criteria criteria = new Criteria();
+    // Criteria criteria = new Criteria();
 
     // Getting the name of the best provider
-    String provider = locationManager.getBestProvider(criteria, true);
+    // String provider = locationManager.getBestProvider(criteria, true);
 
     // Getting Current Location
     Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
@@ -99,6 +100,10 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     return location;
   }
 
+  /**
+   * Method to add marker to show users current location
+   * @param location
+   */
   public void addUserToMap(Location location) {
     // Getting latitude of the current location
     double latitude = location.getLatitude();
@@ -124,6 +129,9 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
   }
 
+  /**
+   * Method to add markers to indicate nearby autos
+   */
   private void addAutosOnMap() {
     // Getting latitude of the current location
     double latitude = userCurrentLocation.latitude;
@@ -131,12 +139,17 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     // Getting longitude of the current location
     double longitude = userCurrentLocation.longitude;
 
+    // All Hard coded for now
     addAutoToMap(latitude + 0.003, longitude);
     addAutoToMap(latitude, longitude + 0.009);
     addAutoToMap(latitude + 0.01, longitude + 0.01);
-
   }
 
+  /**
+   * method to add auto marker to given location
+   * @param latitude
+   * @param longitude
+   */
   private void addAutoToMap(double latitude, double longitude) {
     // Creating a LatLng object for the current location
     LatLng auto = new LatLng(latitude, longitude);
@@ -168,6 +181,9 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     return super.onOptionsItemSelected(item);
   }
 
+  /**
+   * Listener to update user location if location changes
+   */
   @Override
   public void onLocationChanged(Location location) {
     // Getting latitude of the current location
@@ -207,6 +223,9 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
 
   }
 
+  /**
+   * Showing auto details on click of marker
+   */
   @Override
   public boolean onMarkerClick(Marker marker) {
     if (marker != userMarker) {
@@ -215,6 +234,9 @@ public class MapActivity extends ActionBarActivity implements LocationListener, 
     return false;
   }
 
+  /**
+   * Make a call on click of info window
+   */
   @Override
   public void onInfoWindowClick(Marker marker) {
     if (marker != userMarker) {

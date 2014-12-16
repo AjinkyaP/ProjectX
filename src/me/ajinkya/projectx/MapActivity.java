@@ -156,7 +156,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener,
 
     MarkerOptions markerOptions = new MarkerOptions();
     markerOptions.position(auto);
-    markerOptions.title("Umesh, 9975176444");
+    markerOptions.title("Umesh, 0123456789");
     Marker marker = googleMap.addMarker(markerOptions);
     marker.showInfoWindow();
     marker.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.auto));
@@ -241,7 +241,7 @@ public class MapActivity extends ActionBarActivity implements LocationListener,
   public void onInfoWindowClick(Marker marker) {
     if (marker != userMarker) {
       Intent callIntent = new Intent(Intent.ACTION_CALL);
-      callIntent.setData(Uri.parse("tel:9975176444"));
+      callIntent.setData(Uri.parse("tel:0123456789"));
       startActivity(callIntent);
     }
   }
